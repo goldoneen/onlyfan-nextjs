@@ -1,14 +1,17 @@
-import SecureEmail from '../components/SecureEmail';
-
 export const metadata = {
-  title: 'Privacy Policy - Gabby Epstein OnlyFans',
-  description: 'Privacy policy for Gabby Epstein OnlyFans fan page',
+  title: 'Privacy Policy - OnlyFans Search Finder',
+  description: 'Privacy policy for our website',
+  alternates: {
+    canonical: '/privacy-policy',
+  },
   robots: {
     index: false,
     follow: true
   },
-  alternates: {
-    canonical: 'https://www.gabby-epstein-onlyfans.com/privacy-policy'
+  openGraph: {
+    title: 'Privacy Policy - Site Template',
+    description: 'Privacy policy for our website',
+    url: '/privacy-policy',
   }
 };
 
@@ -17,7 +20,7 @@ export default function PrivacyPolicy() {
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
       <div className="prose max-w-none">
-        <p className="mb-8">At Gabby Epstein OnlyFans, we place great importance on confidentiality and protecting your personal data. This policy explains how we collect, use, and safeguard your information.</p>
+        <p className="mb-8">At our company, we place great importance on confidentiality and protecting your personal data. This policy explains how we collect, use, and safeguard your information.</p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">1. Information Collected</h2>
@@ -72,7 +75,7 @@ export default function PrivacyPolicy() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">7. Contact</h2>
-          <p className="mb-4">For any questions about our privacy policy or to exercise your rights, please <SecureEmail />.</p>
+          <p className="mb-4">For any questions about our privacy policy or to exercise your rights, please contact us via our <a href="/contact" className="text-blue-600 hover:underline">contact form</a>.</p>
         </section>
       </div>
     </main>

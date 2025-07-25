@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: 'https://www.gabby-epstein-onlyfans.com',
+  siteUrl: 'https://www.onlyfans-search-finder.com',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [
@@ -10,7 +10,7 @@ const config = {
       },
     ],
     additionalSitemaps: [
-      'https://www.gabby-epstein-onlyfans.com/sitemap.xml',
+      'https://www.onlyfans-search-finder.com/sitemap.xml',
     ],
   },
   changefreq: 'daily',
@@ -30,25 +30,7 @@ const config = {
       }
     }
 
-    // Pages de profils MYM
-    if (path.startsWith('/comptes-mym/')) {
-      return {
-        loc: new URL(path, config.siteUrl).href,
-        changefreq: 'weekly',
-        priority: 0.8,
-        lastmod: new Date().toISOString(),
-      }
-    }
 
-    // Articles de blog
-    if (path.startsWith('/blog/')) {
-      return {
-        loc: new URL(path, config.siteUrl).href,
-        changefreq: 'monthly',
-        priority: 0.6,
-        lastmod: new Date().toISOString(),
-      }
-    }
 
     // Autres pages
     return {

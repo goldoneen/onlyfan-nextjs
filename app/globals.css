@@ -4,20 +4,20 @@
 
 @layer base {
   body {
-    @apply bg-white text-onlyfans-dark antialiased;
+    @apply bg-white text-gray-800 antialiased;
   }
   h1 {
     @apply text-4xl md:text-6xl font-bold;
   }
   h2 {
-    @apply text-3xl font-bold text-onlyfans-dark;
+    @apply text-3xl font-bold text-gray-800;
   }
 }
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -26,19 +26,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00AFF0;
+  background: #888;
   border-radius: 5px;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0077FF;
+  background: #555;
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #00AFF0 #f1f1f1;
+  scrollbar-color: #888 #f1f1f1;
 }
 
 @keyframes shine {
@@ -81,12 +81,11 @@
 }
 
 ::selection {
-  background: #00AFF0;
+  background: #3b82f6;
   color: white;
 }
 
-
-/* Animations pour les composants de monétisation */
+/* Animations de base */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -99,83 +98,29 @@
   100% { background-position: 0% 50%; }
 }
 
-@keyframes typing {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-@keyframes shine {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Classes pour les effets de monétisation */
-.monetization-pulse {
-  animation: pulse 3s infinite ease-in-out;
-}
-
-.monetization-float {
+/* Classes d'animation rÃ©utilisables */
+.float {
   animation: float 6s infinite ease-in-out;
 }
 
-.monetization-gradient {
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+.gradient-bg {
+  background: linear-gradient(-45deg, #3b82f6, #60a5fa, #93c5fd, #3b82f6);
   background-size: 400% 400%;
   animation: gradientBg 15s ease infinite;
 }
 
-.monetization-typing span {
-  display: inline-block;
-  margin-left: 2px;
-  animation: typing 1.5s infinite;
-}
-
-.monetization-typing span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.monetization-typing span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-/* Effets de survol élégants */
-.monetization-hover-elevate {
+/* Effets de survol */
+.hover-elevate {
   transition: all 0.3s ease;
 }
 
-.monetization-hover-elevate:hover {
+.hover-elevate:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Effet de flou pour le fond du postitial */
-.monetization-backdrop {
+/* Effet de flou */
+.backdrop-blur {
   backdrop-filter: blur(5px);
   transition: backdrop-filter 0.5s ease;
-}
-
-/* Effet de bordure brillante */
-.monetization-glow {
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  position: relative;
-}
-
-.monetization-glow::before {
-  content: '';
-  position: absolute;
-  top: -2px; right: -2px; bottom: -2px; left: -2px;
-  background: linear-gradient(45deg, #ff0080, #ff8c00, #00ff8c, #00bfff);
-  background-size: 400% 400%;
-  z-index: -1;
-  animation: gradientBg 10s ease infinite;
-  border-radius: inherit;
 }

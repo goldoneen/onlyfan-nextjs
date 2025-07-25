@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ONLYFANS_URL, SHOULD_OBFUSCATE_LINKS } from '../page';
-import { handleObfuscatedClick } from '../utils/linkObfuscator';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,25 +16,27 @@ const Navbar = () => {
   }, []);
 
   const menuItems = [
-    { id: 'photos', label: 'Gallery' },
-    { id: 'creators', label: 'About' },
-    { id: 'content', label: 'Content' },
-    { id: 'faq', label: 'FAQ' },
+    { id: 'best-models', label: 'Best Models', href: '/best-models' },
+    { id: 'free-models', label: 'Free Models', href: '/free-models' },
   ];
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+  const navigateTo = (item) => {
+    if (item.href) {
+      window.location.href = item.href;
+    } else if (item.id) {
+      const element = document.getElementById(item.id);
+      if (element) {
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
     setIsOpen(false);
   };
@@ -47,24 +47,16 @@ const Navbar = () => {
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo cliquable */}
-          {SHOULD_OBFUSCATE_LINKS ? (
-            <button 
-              onClick={(e) => handleObfuscatedClick(e, ONLYFANS_URL, SHOULD_OBFUSCATE_LINKS)}
-              className="text-xl font-bold text-blue-900 hover:text-blue-700 transition-colors cursor-pointer"
-            >
-              Gabby Epstein OnlyFans
-            </button>
-          ) : (
-            <a 
-              href={ONLYFANS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl font-bold text-blue-900 hover:text-blue-700 transition-colors"
-            >
-              Gabby Epstein OnlyFans
-            </a>
-          )}
+          {/* Logo */}
+          <a 
+            href="/"
+            className="text-xl font-bold text-blue-500 hover:text-blue-600 transition-colors flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+            </svg>
+            <span>OnlyFans Search Finder</span>
+          </a>
 
           <div className="flex items-center gap-4">
             {/* Desktop Menu */}
@@ -72,51 +64,15 @@ const Navbar = () => {
               {menuItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-blue-900 hover:text-blue-700 transition-colors"
+                  onClick={() => navigateTo(item)}
+                  className="text-gray-800 hover:text-blue-500 transition-colors font-medium"
                 >
                   {item.label}
                 </button>
               ))}
             </div>
 
-            {/* Desktop CTA Button */}
-            {SHOULD_OBFUSCATE_LINKS ? (
-              <button
-                onClick={(e) => handleObfuscatedClick(e, ONLYFANS_URL, SHOULD_OBFUSCATE_LINKS)}
-                className="hidden lg:block bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                FREE Trial ➔
-              </button>
-            ) : (
-              <a
-                href={ONLYFANS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden lg:block bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                FREE Trial ➔
-              </a>
-            )}
-
-            {/* Mobile CTA Button */}
-            {SHOULD_OBFUSCATE_LINKS ? (
-              <button
-                onClick={(e) => handleObfuscatedClick(e, ONLYFANS_URL, SHOULD_OBFUSCATE_LINKS)}
-                className="lg:hidden bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                FREE Trial
-              </button>
-            ) : (
-              <a
-                href={ONLYFANS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="lg:hidden bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                FREE Trial
-              </a>
-            )}
+            {/* Contact buttons removed as requested */}
 
             {/* Menu Burger Button */}
             <button
@@ -145,8 +101,8 @@ const Navbar = () => {
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                onClick={() => navigateTo(item)}
+                className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-500 rounded-lg transition-colors"
               >
                 {item.label}
               </button>

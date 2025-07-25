@@ -2,47 +2,43 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
-import MonetizationProvider from './components/monetization/MonetizationProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Gabby Epstein OnlyFans - you won\'t believe it ❤️',
-  description: 'Get FREE Access to Gabby Epstein\'s Premium OnlyFans! Exclusive content, daily updates & VIP experience. Limited time offer! 🔥',
+  title: 'Site Template',
+  description: 'A modern and responsive website template',
   manifest: '/manifest.json',
+  metadataBase: new URL('https://www.site-template.com'),
+  alternates: {
+    canonical: '/',
+  },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent'
-  },
-  alternates: {
-    canonical: 'https://www.gabby-epstein-onlyfans.com/'
+    statusBarStyle: 'default'
   },
   robots: {
     index: true,
     follow: true,
-    nocache: true,
     googleBot: {
       index: true,
       follow: true
     },
   },
   openGraph: {
-    title: 'Gabby Epstein OnlyFans | Premium Content Creator',
-    description: 'Get 30 Days FREE Access to Gabby Epstein\'s Premium OnlyFans! Enjoy exclusive photos, private messages & daily hot content. Limited time offer - Join Now! 🔥',
+    title: 'Site Template',
+    description: 'A modern and responsive website template',
     type: 'website',
-    url: 'https://www.gabby-epstein-onlyfans.com/',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Gabby Epstein OnlyFans | Premium Content',
-    description: 'Get 30 Days FREE Access to Gabby Epstein\'s Premium OnlyFans! Enjoy exclusive photos, private messages & daily hot content. Limited time offer - Join Now! 🔥',
-  },
-  themeColor: '#00AFF0',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1
+    url: '/',
+    siteName: 'Site Template',
+    locale: 'en_US',
   }
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#3b82f6'
 }
 
 const breadcrumbJsonLd = {
@@ -53,13 +49,7 @@ const breadcrumbJsonLd = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: 'https://www.gabby-epstein-onlyfans.com',
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'Gabby Epstein OnlyFans',
-      item: 'https://gabby-epstein-onlyfans.com/onlyfans',
+      item: 'https://www.example.com',
     },
   ],
 }
@@ -70,9 +60,8 @@ export default function RootLayout({ children }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#00AFF0" />
-        <meta name="msapplication-TileColor" content="#00AFF0" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
+        <meta name="theme-color" content="#3b82f6" />
+        <meta name="msapplication-TileColor" content="#3b82f6" />
         
         {/* Classic Favicons */}
         <link rel="shortcut icon" href="/favicon.ico" />
@@ -83,13 +72,13 @@ export default function RootLayout({ children }) {
         
         {/* Apple Touch Icons */}
         <link rel="apple-touch-icon" href="/apple-icon.png" />
-        <link rel="mask-icon" href="/icon.svg" color="#00AFF0" />
+        <link rel="mask-icon" href="/icon.svg" color="#3b82f6" />
         
         {/* Web App */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Gabby Epstein OnlyFans" />
+        <meta name="apple-mobile-web-app-title" content="Site Template" />
       </head>
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen">
@@ -99,7 +88,6 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
         </div>
-                <MonetizationProvider />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}

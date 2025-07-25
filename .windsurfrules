@@ -1,0 +1,53 @@
+Brief du Projet Template Default
+Vue d'ensemble du projet
+Le projet Template Default est un site web développé avec Next.js qui sert de base pour créer des sites d'affiliation. Il comprend plusieurs fonctionnalités clés :
+
+Structure de base d'un site web moderne :
+Pages principales (accueil, contact, mentions légales, politique de confidentialité)
+Composants réutilisables (navbar, footer, boutons)
+Métadonnées SEO optimisées avec URLs canoniques
+Système d'envoi d'emails :
+API intégrée pour l'envoi d'emails via Nodemailer
+Formulaire de contact avec vérification humaine
+Variables d'environnement pour la configuration des emails
+Système d'obfuscation de liens d'affiliation :
+Masquage des liens d'affiliation aux moteurs de recherche et concurrents
+Composants réutilisables pour afficher les liens obfusqués
+Fonctionnement de l'obfuscation de liens
+Le système d'obfuscation de liens est l'une des fonctionnalités principales du projet. Voici comment il fonctionne :
+
+1. Processus d'encodage
+Le fichier app/utils/linkObfuscator.js contient la logique d'obfuscation :
+
+Génération d'un sel aléatoire : Chaque lien reçoit un sel aléatoire unique pour renforcer la sécurité.
+Combinaison avec l'URL : Le sel est combiné avec l'URL d'affiliation (sel|url).
+Encodage : Cette chaîne combinée passe par plusieurs étapes :
+Encodage URI (pour gérer les caractères spéciaux)
+Conversion en Base64
+Suppression du padding Base64 (caractères '=')
+Inversion de la chaîne (les caractères sont mis dans l'ordre inverse)
+2. Utilisation dans les composants
+Deux composants principaux utilisent cette obfuscation :
+
+AffiliateButton (app/components/AffiliateButton.js) :
+Un span stylisé comme un bouton qui utilise un lien obfusqué
+Accessible via clavier et lecteurs d'écran
+Personnalisable (couleur, taille, texte)
+AffiliateCallToAction (app/components/AffiliateCallToAction.js) :
+Une section complète avec titre, description et bouton
+Design attractif avec effets visuels
+Utilise le composant AffiliateButton pour l'action principale
+3. Décodage et redirection
+Lorsqu'un utilisateur clique sur un lien obfusqué :
+
+La fonction handleObfuscatedClick intercepte l'événement
+La chaîne obfusquée est décodée (inversion, décodage Base64, décodage URI)
+Le sel est retiré pour obtenir l'URL originale
+L'utilisateur est redirigé vers l'URL d'affiliation dans un nouvel onglet
+4. Configuration
+Pour utiliser le système avec vos propres liens d'affiliation :
+
+Modifiez la constante OBFUSCATED_AFFILIATE_URL dans linkObfuscator.js
+Utilisez les composants AffiliateButton ou AffiliateCallToAction dans vos pages
+Personnalisez le texte et l'apparence selon vos besoins
+Cette approche permet de masquer efficacement vos liens d'affiliation tout en offrant une expérience utilisateur fluide et attrayante.

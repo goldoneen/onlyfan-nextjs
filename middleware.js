@@ -5,7 +5,7 @@ export function middleware(req) {
 
   // Redirige les sous-domaines Vercel vers le domaine principal
   if (host.endsWith(".vercel.app")) {
-    return NextResponse.redirect("https://www.gabby-epstein-onlyfans.com", 301); // Redirection permanente
+    return NextResponse.redirect("https://www.onlyfans-search-finder.com", 301); // Redirection permanente
   }
 
   // Si ce n'est pas un domaine Vercel, continue le traitement normal
