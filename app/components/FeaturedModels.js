@@ -18,23 +18,24 @@ export function ModelCard({ model }) {
         )}
       </div>
 
-      <div className="p-6 flex flex-col justify-between"> {/* Adjust min-h value as needed for your design */}
+      <div className="p-6 flex flex-col justify-between"> 
         <div>
           <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="text-xl font-bold">{model.model_name || model.name}</h3>
+            <div className="flex-grow min-w-0 pr-2"> {/* Added flex-grow, min-w-0, and pr-2 */}
+              <h3 className="text-xl font-bold truncate">{model.model_name || model.name}</h3>
               <p className="text-blue-500">{model.text_small || model.username}</p>
             </div>
-            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0"> {/* Added flex-shrink-0 */}
               {model.price}
             </span>
           </div>
+
           <p className="text-gray-600 line-clamp-2 min-h-12">
-            {model.model_description || model.description || '\u00A0'} {/* IMPORTANT: Add '\u00A0' (non-breaking space) */}
+            {model.model_description || model.description || '\u00A0'} 
           </p>
         </div>
 
-        <div className="mt-auto pt-4"> {/* Added pt-4 for consistent spacing */}
+        <div className="mt-auto pt-4"> 
           <AffiliateButton
             text="View Profile"
             variant="primary"
@@ -42,6 +43,7 @@ export function ModelCard({ model }) {
             obfuscatedUrl={model.affiliateUrl || '#'}
             className="w-full"
           />
+
         </div>
       </div>
     </div>
