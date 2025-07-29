@@ -17,7 +17,7 @@ export async function GET() {
 // POST: get up to 20 models for a given category
 export async function POST(request) {
   try {
-    const { category, skip = 0, limit = 12 } = await request.json();
+    const { category, skip = 0, limit = 40 } = await request.json();
     if (!category) {
       return NextResponse.json({ error: 'Category is required' }, { status: 400 });
     }

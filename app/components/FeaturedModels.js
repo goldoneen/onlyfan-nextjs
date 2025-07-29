@@ -4,6 +4,46 @@ import { useState } from 'react';
 import Image from 'next/image';
 import AffiliateButton from './AffiliateButton';
 
+export function ModelCard({ model }) {
+  return (
+    <div className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
+      <div className="relative h-80 w-full">
+        {/* Placeholder pour l'image - à remplacer par de vraies images */}
+        {model.image_url ? (
+          <img src={model.image_url} alt={model.model_name || model.name} className="object-cover w-full h-full" />
+        ) : (
+          <div className="h-full w-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400">Image placeholder</span>
+          </div>
+        )}
+      </div>
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <h3 className="text-xl font-bold">{model.model_name || model.name}</h3>
+            <p className="text-blue-500">{model.text_small || model.username}</p>
+          </div>
+          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            {model.price}
+          </span>
+        </div>
+        <p className="text-gray-600 mb-4 line-clamp-2">
+          {model.model_description || model.description}
+        </p>
+        <div className="mt-4">
+          <AffiliateButton
+            text="View Profile"
+            variant="primary"
+            size="medium"
+            obfuscatedUrl={model.affiliateUrl || '#'}
+            className="w-full"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Données de démonstration pour les modèles en vedette
 const featuredModelsData = [
   {
@@ -68,57 +108,7 @@ export default function FeaturedModels() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredModelsData.map((model) => (
-            <div key={model.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
-              <div className="relative h-80 w-full">
-                {/* Placeholder pour l'image - à remplacer par de vraies images */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 z-10"></div>
-                <div className="absolute top-4 right-4 z-20">
-                  <button 
-                    onClick={() => toggleFavorite(model.id)}
-                    className="p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-                  >
-                    {favorites[model.id] ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-                <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-400">Image placeholder</span>
-                </div>
-              </div>
-              
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-xl font-bold">{model.name}</h3>
-                    <p className="text-blue-500">{model.username}</p>
-                  </div>
-                  <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                    {model.price}
-                  </span>
-                </div>
-                
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {model.description}
-                </p>
-                
-                <div className="mt-4">
-                  <AffiliateButton 
-                    text="View Profile" 
-                    variant="primary" 
-                    size="medium"
-                    customUrl={model.affiliateUrl}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-            </div>
+            <ModelCard key={model.id} model={model} />
           ))}
         </div>
       </div>
