@@ -8,7 +8,7 @@ export function ModelCard({ model }) {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
       <div className="relative h-80 w-full">
-        {/* Placeholder pour l'image - à remplacer par de vraies images */}
+        {/* Placeholder for the image - to be replaced with actual images */}
         {model.image_url ? (
           <img src={model.image_url} alt={model.model_name || model.name} className="object-cover w-full h-full" />
         ) : (
@@ -17,20 +17,24 @@ export function ModelCard({ model }) {
           </div>
         )}
       </div>
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <h3 className="text-xl font-bold">{model.model_name || model.name}</h3>
-            <p className="text-blue-500">{model.text_small || model.username}</p>
+
+      <div className="p-6 flex flex-col justify-between"> {/* Adjust min-h value as needed for your design */}
+        <div>
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <h3 className="text-xl font-bold">{model.model_name || model.name}</h3>
+              <p className="text-blue-500">{model.text_small || model.username}</p>
+            </div>
+            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              {model.price}
+            </span>
           </div>
-          <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-            {model.price}
-          </span>
+          <p className="text-gray-600 line-clamp-2 min-h-12">
+            {model.model_description || model.description || '\u00A0'} {/* IMPORTANT: Add '\u00A0' (non-breaking space) */}
+          </p>
         </div>
-        <p className="text-gray-600 mb-4 line-clamp-2">
-          {model.model_description || model.description}
-        </p>
-        <div className="mt-4">
+
+        <div className="mt-auto pt-4"> {/* Added pt-4 for consistent spacing */}
           <AffiliateButton
             text="View Profile"
             variant="primary"
