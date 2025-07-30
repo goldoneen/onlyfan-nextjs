@@ -35,7 +35,8 @@ export async function POST(request) {
         model_description: 1,
         price: 1,
         text_small: 1,
-        category: 1
+        category: 1,
+        profile: 1
       })
       .toArray();
     return NextResponse.json({ models });

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import AffiliateButton from './AffiliateButton';
 
 export function ModelCard({ model }) {
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
       <div className="relative h-80 w-full">
@@ -42,8 +43,9 @@ export function ModelCard({ model }) {
             size="medium"
             obfuscatedUrl={model.affiliateUrl || '#'}
             className="w-full"
+            profile={model.profile || '#'}
+            // profile="https://onlyfans.com/bosnianprincessx"
           />
-
         </div>
       </div>
     </div>

@@ -4,24 +4,26 @@ import { useState, useEffect, useCallback } from "react";
 import countryList from "../utils/countryList"; // Ensure this path is correct
 import { ModelCard } from "../components/FeaturedModels"; // Ensure this path is correct
 
+// Helper function (unchanged)
 function slugifyCountry(country) {
   return country.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export default function NearMePage() {
-  const [detectedCountry, setDetectedCountry] = useState("");
-  const [detecting, setDetecting] = useState(false);
-  const [error, setError] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [models, setModels] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  // State variables
+  const [detectedCountry, setDetectedCountry] = useState(""); // Country detected by geolocation
+  const [detecting, setDetecting] = useState(false); // True while geolocation is in progress
+  const [error, setError] = useState(""); // Stores any error messages
+  const [selectedCountry, setSelectedCountry] = useState(""); // The country explicitly chosen or confirmed
+  const [showModal, setShowModal] = useState(false); // Controls visibility of the country selection modal
+  const [models, setModels] = useState([]); // Stores the list of models
+  const [loading, setLoading] = useState(false); // True while initial models are loading
+  const [loadingMore, setLoadingMore] = useState(false); // True while subsequent models are loading ("Load more" button)
+  const [hasMore, setHasMore] = useState(true); // True if there's potentially more data to load
 
-  // Fetch models for the selected country
+  // Memoized function to fetch models for a given country
   const fetchModels = useCallback(
-    async (country, skip = 0, limit = 40) => {
+    async (country, skip = 0, limit = 40) => { // Default limit for subsequent loads is 40
       if (!country) return [];
       const res = await fetch("/api/location-models", {
         method: "POST",
@@ -29,51 +31,58 @@ export default function NearMePage() {
         body: JSON.stringify({ location: country, skip, limit }),
       });
       const data = await res.json();
+      // IMPORTANT: If your backend consistently returns 15 models when 40 are requested,
+      // the issue is in your /api/location-models backend endpoint.
+      // Ensure your backend code respects the 'limit' parameter and fetches the requested number of models.
       return data.models || [];
     },
     []
   );
 
-  // Function to handle location detection
+  // Function to handle location detection using browser's Geolocation API
   const handleUseMyLocation = useCallback(async () => {
     setDetecting(true);
     setError("");
+    setModels([]); // Clear any previously loaded models
+    setSelectedCountry(""); // Clear selected country until detection is confirmed
+    setHasMore(true); // Reset hasMore state
+
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
       setDetecting(false);
+      setShowModal(true); // Open modal for manual selection if geolocation is not supported
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
         try {
+          // Reverse geocoding using OpenStreetMap Nominatim
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
             { headers: { "Accept-Language": "en" } }
           );
           const data = await res.json();
           const country = data.address?.country;
+
           if (country) {
             setDetectedCountry(country);
-            // Check if the detected country is in your supported list
             if (countryList.includes(country)) {
-              setSelectedCountry(country); // Automatically set as selected
-              setShowModal(false); // Close modal if open
+              setSelectedCountry(country); // Set as selected, which will trigger initial model load via useEffect
+              setShowModal(false);
               setError("");
             } else {
               setError("Detected country is not supported. Please choose your country manually.");
-              // Optionally open modal here if the detected country isn't supported
               setShowModal(true);
             }
           } else {
             setError("Could not detect country from your location.");
-            // If location detection fails, open the modal for manual selection
             setShowModal(true);
           }
         } catch (err) {
           console.error("Geolocation reverse lookup failed:", err);
           setError("Failed to detect location. Please choose manually.");
-          // If API call fails, open the modal for manual selection
           setShowModal(true);
         } finally {
           setDetecting(false);
@@ -83,88 +92,80 @@ export default function NearMePage() {
         console.error("Geolocation error:", err);
         setError("Failed to get your location. Please choose manually.");
         setDetecting(false);
-        // If geolocation permission is denied or fails, open the modal for manual selection
         setShowModal(true);
       },
       {
-        enableHighAccuracy: false, // Set to true if more precise location is needed
-        timeout: 10000,            // 10 seconds timeout
-        maximumAge: 0              // Do not use cached position
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 0
       }
     );
-  }, [countryList]); // Add countryList as a dependency if it's dynamic, otherwise, it's stable
+  }, [countryList]);
 
   // Effect to call handleUseMyLocation when the component mounts
   useEffect(() => {
     handleUseMyLocation();
-  }, [handleUseMyLocation]); // Dependency on handleUseMyLocation ensures it's called reliably when stable
+  }, [handleUseMyLocation]);
 
+  // Function to handle manual country selection from the modal
+  const handleCountrySelect = (country) => {
+    setSelectedCountry(country); // Set the manually selected country, which will trigger initial model load via useEffect
+    setShowModal(false);
+    setError("");
+    setModels([]); // Clear models when a new country is selected
+    setHasMore(true); // Reset hasMore for the new country
+  };
 
-  // When selectedCountry changes, fetch models
+  // NEW: Effect to automatically load the first 20 models when selectedCountry changes
   useEffect(() => {
     if (!selectedCountry) {
-      setModels([]); // Clear models if no country is selected
+      setModels([]);
       setHasMore(false);
       return;
     }
-    setLoading(true);
-    // Reset models and pagination state for new country
-    setModels([]);
-    setHasMore(true);
 
-    fetchModels(selectedCountry, 0, 40).then((initialModels) => {
-      setModels(initialModels);
-      // If we got fewer models than the limit, there might not be more
-      setHasMore(initialModels.length === 40);
-      setLoading(false);
-    }).catch(err => {
+    setLoading(true); // Set loading for the initial fetch
+    setModels([]); // Clear previous models
+    setHasMore(true); // Reset hasMore for new country
+
+    // Fetch the first 20 models automatically
+    fetchModels(selectedCountry, 0, 20) // Requesting 20 models for the initial load
+      .then((initialModels) => {
+        setModels(initialModels);
+        // If we got fewer than 20 models, there might not be more
+        setHasMore(initialModels.length === 20);
+        setLoading(false); // Reset loading state
+      })
+      .catch(err => {
         console.error("Error fetching initial models:", err);
         setLoading(false);
         setError("Failed to load models for this country.");
-    });
-  }, [selectedCountry, fetchModels]);
+      });
+  }, [selectedCountry, fetchModels]); // Trigger this effect when selectedCountry or fetchModels changes
 
-  const handleCountrySelect = (country) => {
-    setSelectedCountry(country);
-    setShowModal(false);
-    setError("");
-  };
-
+  // This function now handles ONLY subsequent "Load more" clicks
   const handleLoadMore = async () => {
-    if (!selectedCountry || loadingMore || !hasMore) return;
+    // Prevent multiple simultaneous loads or loading if no country is selected
+    if (!selectedCountry || loading || loadingMore || !hasMore) return;
 
-    setLoadingMore(true);
+    setLoadingMore(true); // Set loading more state
+
     try {
-        const moreModels = await fetchModels(selectedCountry, models.length, 40);
-        setModels((prev) => [...prev, ...moreModels]);
-        setHasMore(moreModels.length === 40);
+      // For subsequent loads, request 40 models
+      const fetchedModels = await fetchModels(selectedCountry, models.length, 40);
+      setModels((prev) => [...prev, ...fetchedModels]); // Append new models
+      setHasMore(fetchedModels.length === 40); // Update hasMore based on fetched count
     } catch (err) {
-        console.error("Error loading more models:", err);
-        setError("Failed to load more models.");
+      console.error("Error loading more models:", err);
+      setError("Failed to load more models.");
+      setHasMore(false); // Assume no more data on error
     } finally {
-        setLoadingMore(false);
+      setLoadingMore(false); // Reset loading more state
     }
   };
 
-  // Optional: Implement infinite scroll logic here if not already done via button
-  // For example, using Intersection Observer or window scroll events
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 500 && // 500px from bottom
-        hasMore &&
-        !loadingMore &&
-        !loading // Ensure initial loading is complete
-      ) {
-        handleLoadMore();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loadingMore, loading, handleLoadMore]);
-
+  // Removed: Infinite scroll logic (useEffect that listens for scroll events)
+  // This functionality is now entirely removed as per your request.
 
   return (
     <section className="pb-12 bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] min-h-screen">
@@ -237,40 +238,40 @@ export default function NearMePage() {
           </div>
         )}
 
-        {/* Models grid */}
-        {selectedCountry ? (
+        {/* Models grid and load more button */}
+        {selectedCountry ? ( // Only show this section if a country is selected
           <div className="mt-10">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-2">OnlyFans Models in {selectedCountry}</h2>
               <p className="text-lg text-gray-600">Discover OnlyFans creators near you in {selectedCountry}</p>
             </div>
-            {loading ? (
+
+            {loading ? ( // Show initial loading spinner
               <div className="text-center text-lg text-gray-500 py-8">Loading models...</div>
-            ) : models.length > 0 ? (
+            ) : models.length > 0 ? ( // Show models grid if models are loaded
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
                   {models.map((model, idx) => (
-                    // Ensure ModelCard correctly uses the 'model' prop
                     <ModelCard key={model.model_name + (model.id || idx)} model={model} />
                   ))}
                 </div>
-                {hasMore && (
+                {hasMore && ( // Show "Load more" button if there's potentially more data
                   <div className="flex justify-center mt-8">
                     <button
-                      onClick={handleLoadMore}
+                      onClick={handleLoadMore} // Now explicitly calls handleLoadMore for subsequent loads
                       className="px-8 py-3 bg-gradient-to-r from-blue-400 to-cyan-500 text-white rounded-full font-semibold text-lg shadow hover:from-blue-500 hover:to-cyan-600 transition-all duration-300"
-                      disabled={loadingMore}
+                      disabled={loadingMore || loading} // Disable if any loading is in progress
                     >
                       {loadingMore ? "Loading..." : "Load more"}
                     </button>
                   </div>
                 )}
               </>
-            ) : (
+            ) : ( // No models found after initial load attempt, and no more expected (hasMore is false)
               <div className="text-center text-lg text-gray-500 py-8">No models found for {selectedCountry}.</div>
             )}
           </div>
-        ) : (
+        ) : ( // If no country is selected yet
           <div className="text-center text-lg text-gray-500 py-8">
             Please use your location or choose a country to find models.
           </div>

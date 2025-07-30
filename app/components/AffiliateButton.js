@@ -2,15 +2,21 @@
 
 import { handleObfuscatedClick, OBFUSCATED_AFFILIATE_URL } from '../utils/linkObfuscator';
 
-export default function AffiliateButton({ 
-  text = 'Get Offer', 
-  className = '', 
+export default function AffiliateButton({
+  text = 'Get Offer',
+  className = '',
   obfuscatedUrl = OBFUSCATED_AFFILIATE_URL,
+  profile, // NEW: Accepting the 'profile' object directly
   variant = 'primary',
   size = 'medium'
 }) {
+  // Extract the profile URL from the profile object
+  // Assuming 'profile' is an object that contains a 'url' property.
+  // If 'profile' itself is the URL string, you can simply use 'profile'.
+  const profileurl = profile || '#'; // Safely access url, fallback to '#'
+
   // Styles de base et variantes
-  const baseStyles = "inline-block cursor-pointer font-bold rounded-lg transition-all duration-300 transform hover:scale-105";
+  const baseStyles = "inline-block cursor-pointer font-bold rounded-lg transition-all duration-300 transform hover:scale-105 text-center"; // Added text-center for better button text alignment
   
   // Variantes de couleur
   const variantStyles = {
@@ -31,22 +37,18 @@ export default function AffiliateButton({
   };
 
   // Combiner les styles
-  const spanStyles = `${baseStyles} ${variantStyles[variant] || variantStyles.primary} ${sizeStyles[size] || sizeStyles.medium} ${className}`;
+  const combinedClasses = `${baseStyles} ${variantStyles[variant] || variantStyles.primary} ${sizeStyles[size] || sizeStyles.medium} ${className}`;
 
   return (
-    <span
-      onClick={(e) => handleObfuscatedClick(e, obfuscatedUrl)}
-      className={spanStyles}
-      role="button"
-      tabIndex="0"
+    <a
+      href={profileurl} // Now uses the extracted profileUrl
+      // onClick={(e) => handleObfuscatedClick(e, obfuscatedUrl)}
+      className={combinedClasses}
+      target="_blank" // Open link in a new tab
+      rel="noopener noreferrer" // Security best practice for target="_blank"
       aria-label={text}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          handleObfuscatedClick(e, obfuscatedUrl);
-        }
-      }}
     >
       {text}
-    </span>
+    </a>
   );
 }
