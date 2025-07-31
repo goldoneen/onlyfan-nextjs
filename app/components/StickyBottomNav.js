@@ -56,7 +56,7 @@ export default function StickyBottomNav() {
           
           {/* Best Link */}
           <Link 
-            href="/best"
+            href="/best-models"
             className={`flex flex-col items-center justify-center w-1/4 h-full ${activeTab === 'best' ? 'text-blue-500' : 'text-gray-500'}`}
             onClick={() => handleTabClick('best')}
           >
