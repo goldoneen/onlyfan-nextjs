@@ -30,7 +30,6 @@ export default function HeroSection() {
     setTimeout(() => setShowSelect(false), 150);
   };
 
-  // Slugify category for URL
   const slugify = (cat) =>
     cat.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
@@ -61,7 +60,6 @@ export default function HeroSection() {
               ONLYFANS FINDER • SEARCH ENGINE
             </span>
           </div>
-          {/* Titre principal */}
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             OnlyFans Search Finder: The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">Ultimate</span>
           </h1>
@@ -71,11 +69,9 @@ export default function HeroSection() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Search Engine
           </h1>
-          {/* Sous-titre */}
           <p className="text-xl mb-8 text-gray-600">
             Search by name, username, category, location or interests
           </p>
-          {/* Barre de recherche */}
           <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto mb-8">
             <input
               type="text"

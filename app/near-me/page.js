@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import countryList from "../utils/countryList"; // Ensure this path is correct
-import { ModelCard } from "../components/FeaturedModels"; // Ensure this path is correct
+import countryList from "../utils/countryList"; 
+import { ModelCard } from "../components/FeaturedModels";
 
 // Helper function (unchanged)
 function slugifyCountry(country) {
@@ -10,20 +10,20 @@ function slugifyCountry(country) {
 }
 
 export default function NearMePage() {
-  // State variables
-  const [detectedCountry, setDetectedCountry] = useState(""); // Country detected by geolocation
-  const [detecting, setDetecting] = useState(false); // True while geolocation is in progress
-  const [error, setError] = useState(""); // Stores any error messages
-  const [selectedCountry, setSelectedCountry] = useState(""); // The country explicitly chosen or confirmed
-  const [showModal, setShowModal] = useState(false); // Controls visibility of the country selection modal
-  const [models, setModels] = useState([]); // Stores the list of models
-  const [loading, setLoading] = useState(false); // True while initial models are loading
-  const [loadingMore, setLoadingMore] = useState(false); // True while subsequent models are loading ("Load more" button)
-  const [hasMore, setHasMore] = useState(true); // True if there's potentially more data to load
+
+  const [detectedCountry, setDetectedCountry] = useState(""); 
+  const [detecting, setDetecting] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [showModal, setShowModal] = useState(false); 
+  const [models, setModels] = useState([]); 
+  const [loading, setLoading] = useState(false); 
+  const [loadingMore, setLoadingMore] = useState(false); 
+  const [hasMore, setHasMore] = useState(true); 
 
   // Memoized function to fetch models for a given country
   const fetchModels = useCallback(
-    async (country, skip = 0, limit = 40) => { // Default limit for subsequent loads is 40
+    async (country, skip = 0, limit = 40) => { 
       if (!country) return [];
       const res = await fetch("/api/location-models", {
         method: "POST",
@@ -31,9 +31,7 @@ export default function NearMePage() {
         body: JSON.stringify({ location: country, skip, limit }),
       });
       const data = await res.json();
-      // IMPORTANT: If your backend consistently returns 15 models when 40 are requested,
-      // the issue is in your /api/location-models backend endpoint.
-      // Ensure your backend code respects the 'limit' parameter and fetches the requested number of models.
+
       return data.models || [];
     },
     []
@@ -43,14 +41,14 @@ export default function NearMePage() {
   const handleUseMyLocation = useCallback(async () => {
     setDetecting(true);
     setError("");
-    setModels([]); // Clear any previously loaded models
-    setSelectedCountry(""); // Clear selected country until detection is confirmed
-    setHasMore(true); // Reset hasMore state
+    setModels([]); 
+    setSelectedCountry(""); 
+    setHasMore(true); 
 
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
       setDetecting(false);
-      setShowModal(true); // Open modal for manual selection if geolocation is not supported
+      setShowModal(true); 
       return;
     }
 
@@ -69,7 +67,7 @@ export default function NearMePage() {
           if (country) {
             setDetectedCountry(country);
             if (countryList.includes(country)) {
-              setSelectedCountry(country); // Set as selected, which will trigger initial model load via useEffect
+              setSelectedCountry(country); 
               setShowModal(false);
               setError("");
             } else {
@@ -109,14 +107,14 @@ export default function NearMePage() {
 
   // Function to handle manual country selection from the modal
   const handleCountrySelect = (country) => {
-    setSelectedCountry(country); // Set the manually selected country, which will trigger initial model load via useEffect
+    setSelectedCountry(country); 
     setShowModal(false);
     setError("");
-    setModels([]); // Clear models when a new country is selected
-    setHasMore(true); // Reset hasMore for the new country
+    setModels([]); 
+    setHasMore(true); 
   };
 
-  // NEW: Effect to automatically load the first 20 models when selectedCountry changes
+  // Effect to automatically load the first 20 models when selectedCountry changes
   useEffect(() => {
     if (!selectedCountry) {
       setModels([]);
@@ -124,48 +122,43 @@ export default function NearMePage() {
       return;
     }
 
-    setLoading(true); // Set loading for the initial fetch
-    setModels([]); // Clear previous models
-    setHasMore(true); // Reset hasMore for new country
+    setLoading(true); 
+    setModels([]); 
+    setHasMore(true); 
 
     // Fetch the first 20 models automatically
-    fetchModels(selectedCountry, 0, 20) // Requesting 20 models for the initial load
+    fetchModels(selectedCountry, 0, 20) 
       .then((initialModels) => {
         setModels(initialModels);
-        // If we got fewer than 20 models, there might not be more
         setHasMore(initialModels.length === 20);
-        setLoading(false); // Reset loading state
+        setLoading(false); 
       })
       .catch(err => {
         console.error("Error fetching initial models:", err);
         setLoading(false);
         setError("Failed to load models for this country.");
       });
-  }, [selectedCountry, fetchModels]); // Trigger this effect when selectedCountry or fetchModels changes
+  }, [selectedCountry, fetchModels]); 
 
   // This function now handles ONLY subsequent "Load more" clicks
   const handleLoadMore = async () => {
-    // Prevent multiple simultaneous loads or loading if no country is selected
     if (!selectedCountry || loading || loadingMore || !hasMore) return;
 
-    setLoadingMore(true); // Set loading more state
+    setLoadingMore(true); 
 
     try {
       // For subsequent loads, request 40 models
       const fetchedModels = await fetchModels(selectedCountry, models.length, 40);
-      setModels((prev) => [...prev, ...fetchedModels]); // Append new models
-      setHasMore(fetchedModels.length === 40); // Update hasMore based on fetched count
+      setModels((prev) => [...prev, ...fetchedModels]); 
+      setHasMore(fetchedModels.length === 40); 
     } catch (err) {
       console.error("Error loading more models:", err);
       setError("Failed to load more models.");
-      setHasMore(false); // Assume no more data on error
+      setHasMore(false); 
     } finally {
-      setLoadingMore(false); // Reset loading more state
+      setLoadingMore(false); 
     }
   };
-
-  // Removed: Infinite scroll logic (useEffect that listens for scroll events)
-  // This functionality is now entirely removed as per your request.
 
   return (
     <section className="pb-12 bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] min-h-screen">
@@ -248,7 +241,7 @@ export default function NearMePage() {
 
             {loading ? ( // Show initial loading spinner
               <div className="text-center text-lg text-gray-500 py-8">Loading models...</div>
-            ) : models.length > 0 ? ( // Show models grid if models are loaded
+            ) : models.length > 0 ? ( 
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
                   {models.map((model, idx) => (
@@ -258,9 +251,9 @@ export default function NearMePage() {
                 {hasMore && ( // Show "Load more" button if there's potentially more data
                   <div className="flex justify-center mt-8">
                     <button
-                      onClick={handleLoadMore} // Now explicitly calls handleLoadMore for subsequent loads
+                      onClick={handleLoadMore} 
                       className="px-8 py-3 bg-gradient-to-r from-blue-400 to-cyan-500 text-white rounded-full font-semibold text-lg shadow hover:from-blue-500 hover:to-cyan-600 transition-all duration-300"
-                      disabled={loadingMore || loading} // Disable if any loading is in progress
+                      disabled={loadingMore || loading} 
                     >
                       {loadingMore ? "Loading..." : "Load more"}
                     </button>

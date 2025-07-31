@@ -10,9 +10,7 @@ export default function AffiliateButton({
   variant = 'primary',
   size = 'medium'
 }) {
-  // Extract the profile URL from the profile object
-  // Assuming 'profile' is an object that contains a 'url' property.
-  // If 'profile' itself is the URL string, you can simply use 'profile'.
+
   const profileurl = profile || '#'; // Safely access url, fallback to '#'
 
   // Styles de base et variantes

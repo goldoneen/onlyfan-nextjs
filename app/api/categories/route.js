@@ -6,7 +6,6 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db('onlyfans');
     const modelsCollection = db.collection('models');
-    // Get unique categories
     const categories = await modelsCollection.distinct('category');
     return NextResponse.json({ categories });
   } catch (error) {
